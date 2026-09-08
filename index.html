@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Analytics</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#333}
+body{display:flex;justify-content:center;padding:28px 14px}
+.page{width:min(720px,100%);background:#fff;min-height:calc(100vh - 56px);box-shadow:0 0 0 2px #222;overflow:hidden;position:relative}
+.header{height:102px;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:space-between;padding:0 42px}
+.brand{display:flex;align-items:center;gap:14px;font-size:25px;font-weight:700;color:#111}
+.brand-icon{width:48px;height:36px;border:2px solid #ddd;display:grid;place-items:center;color:#888;font-size:12px}
+.bars{height:145px;display:flex;align-items:flex-end;justify-content:center;gap:10px;padding-bottom:25px}
+.bar{width:18px;background:#27a844;border-radius:2px 2px 0 0}
+.bar:nth-child(1){height:68px}.bar:nth-child(2){height:78px}.bar:nth-child(3){height:88px}
+.bar:nth-child(4){height:98px}.bar:nth-child(5){height:108px}.bar:nth-child(6){height:108px}
+.hero{margin:0 28px;background:#fafafa;min-height:230px;position:relative;overflow:hidden;padding:30px}
+.hero h1{font-size:38px;line-height:.92;letter-spacing:1px;margin:0;color:#111;max-width:310px}
+.hero p{margin:14px 0 0;color:#666;font-size:15px}
+.studio{position:absolute;right:0;top:0;background:#ef4a4d;color:white;font-weight:700;padding:10px 22px 10px 90px;clip-path:polygon(30% 0,100% 0,100% 100%,0 0)}
+.studio span{position:relative;z-index:2;margin-left:50px;white-space:nowrap}
+.hero-graphic{position:absolute;right:30px;bottom:-8px;width:310px;height:185px}
+.phone-mini{position:absolute;right:68px;bottom:0;width:155px;height:175px;border:7px solid #222;border-radius:25px;background:#fff}
+.phone-mini:before{content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);width:48px;height:6px;border-radius:6px;background:#222}
+.chart{position:absolute;left:20px;right:20px;top:46px;height:75px}
+.chart i{position:absolute;width:8px;border-radius:5px;bottom:0}
+.chart i:nth-child(1){height:28px;left:4px;background:#18a889}.chart i:nth-child(2){height:58px;left:43px;background:#d62b88}
+.chart i:nth-child(3){height:45px;left:83px;background:#5d4acb}
+.line{position:absolute;left:0;right:0;top:18px;height:3px;background:#2c9ec1;transform:rotate(-8deg)}
+.arrow{position:absolute;right:5px;top:15px;width:48px;height:48px;border-radius:50%;background:#14aa91;color:white;font-size:31px;text-align:center;line-height:48px}
+.main{display:flex;justify-content:center;padding:24px 20px 40px}
+.phone{width:400px;max-width:80vw;height:690px;border:16px solid #242424;border-radius:70px;background:#fff;box-shadow:0 8px 18px #bbb;position:relative;overflow:hidden}
+.phone-top{height:66px;background:#222;display:flex;align-items:center;padding-left:38px}
+.yt{width:26px;height:18px;background:#f00;border-radius:5px;position:relative}
+.yt:after{content:"";position:absolute;left:10px;top:4px;border-left:8px solid #fff;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.screen{background:#f5f5f5;height:calc(100% - 66px);padding:38px 35px}
+.analytics-title{font-size:24px;font-weight:700;margin:0 0 28px;color:#222;display:flex;justify-content:space-between}
+.metric{background:#fff;border-radius:18px;padding:18px 20px;margin-bottom:18px;box-shadow:0 2px 8px #ddd}
+.metric-head{display:flex;justify-content:space-between;font-size:18px;color:#333}
+.up{color:#22a85a;font-weight:700}
+.spark{height:70px;position:relative;margin-top:7px;overflow:hidden}
+.spark svg{width:100%;height:100%}
+.login{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:block;width:max-content;border:0;border-radius:50px;background:linear-gradient(135deg,#111,#333);color:#fff;font-size:20px;font-weight:700;padding:14px 48px;text-decoration:none;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.22);transition:transform .2s,box-shadow .2s,background .2s;z-index:10}
+.login:hover{transform:translateX(-50%) translateY(-3px);box-shadow:0 14px 28px rgba(0,0,0,.28);background:linear-gradient(135deg,#222,#444)}
+.login:active{transform:translateY(0);box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.login:focus-visible{outline:3px solid rgba(20,170,145,.35);outline-offset:3px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;z-index:5}
+.modal.show{display:flex}
+.box{background:#fff;border-radius:18px;width:min(390px,100%);padding:28px;position:relative}
+.box h2{margin-top:0}
+.box input{width:100%;padding:13px;margin:7px 0;border:1px solid #ccc;border-radius:8px}
+.box button{width:100%;padding:13px;margin-top:12px;border:0;border-radius:8px;background:#e50914;color:#fff;font-weight:700}
+.close{position:absolute;right:15px;top:10px;border:0;background:none;font-size:28px;cursor:pointer}
+@media(max-width:600px){
+ body{padding:0}.page{min-height:100vh}.header{height:78px;padding:0 16px}.brand{font-size:18px}.brand-icon{width:35px;height:28px}.register{font-size:14px;padding:11px 15px}
+ .bars{height:110px}.hero{margin:0 12px;min-height:205px;padding:25px 18px}.hero h1{font-size:30px}.hero-graphic{right:-35px;transform:scale(.75);transform-origin:right bottom}
+ .phone{height:610px;width:350px;border-width:13px;border-radius:55px}.screen{padding:30px 25px}.login{font-size:18px;padding:13px 38px;bottom:22px}
+}
+</style>
+</head>
+<body>
+<div class="page"> 
+  <div class="signal-wrap" aria-label="Channel growth signal">
+    <div class="signal-icon"><span></span><span></span><span></span><span></span></div>
+  </div>
+
+  <section class="hero">
+    <div class="studio"><span>▶ Studio</span></div>
+    <h1>MOBILE<br>ANALYTICS</h1>
+    <p>Pantau performa channel dengan mudah dari perangkat mobile.</p>
+    <div class="hero-graphic">
+      <div class="phone-mini">
+        <div class="chart">
+          <div class="line"></div>
+          <i></i><i></i><i></i>
+          <div class="arrow">↑</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="main">
+    <div class="phone">
+      <div class="phone-top"><div class="yt"></div></div>
+      <div class="screen">
+        <h2 class="analytics-title"><span>Analytics</span><span>⋮</span></h2>
+
+        <div class="metric">
+          <div class="metric-head"><span>Views</span><span class="up">+24%</span></div>
+          <div class="spark">
+            <svg viewBox="0 0 300 70" preserveAspectRatio="none">
+              <polyline points="0,58 20,50 38,53 58,41 75,45 95,34 115,38 137,25 155,31 176,20 195,25 214,15 233,20 250,9 273,15 300,5" fill="none" stroke="#e33" stroke-width="4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-head"><span>Watch time</span><span class="up">+18%</span></div>
+          <div class="spark">
+            <svg viewBox="0 0 300 70" preserveAspectRatio="none">
+              <polyline points="0,55 20,59 40,51 63,47 82,51 103,41 125,45 145,34 165,39 187,25 206,31 225,21 244,27 263,15 283,18 300,13" fill="none" stroke="#1465c0" stroke-width="4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-head"><span>Subscribers</span><span class="up">+12%</span></div>
+          <div class="spark">
+            <svg viewBox="0 0 300 70" preserveAspectRatio="none">
+              <polyline points="0,56 22,53 43,55 62,48 83,51 102,43 122,45 145,38 164,36 186,32 207,31 226,25 248,24 267,18 286,15 300,10" fill="none" stroke="#35a85a" stroke-width="4"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <a class="login" href="masuk/index.html" target="_blank" rel="noopener noreferrer">Login</a>
+</div>
+
+</body>
+</html>
